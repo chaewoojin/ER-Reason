@@ -23,6 +23,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 #                                        #   "budget_tokens": 10000}} to enable thinking mode
 #   "microsoft/phi-4"
 MODEL_NAME = "microsoft/phi-4"
+MODEL_TAG  = re.sub(r'[^A-Za-z0-9._-]+', '__', MODEL_NAME).strip('._-') or 'model'
 
 MAX_RETRIES = 5
 N_WORKERS   = 10
@@ -286,7 +287,7 @@ def calculate_accuracy(df, true_col='acuitylevel'):
 if __name__ == "__main__":
     # Load your dataset — must contain: encounterkey, primarychiefcomplaintname,
     # and optionally: Age, sex, firstrace, acuitylevel (for evaluation)
-    # df = pd.read_csv("your_data.csv")
+    df = pd.read_csv("er_reason.csv")
 
     # Extract vital signs from ED provider notes (required preprocessing step)
     df['Vital_Signs'] = df['ED_Provider_Notes_Text'].apply(extract_vital_signs)
@@ -299,7 +300,7 @@ if __name__ == "__main__":
         df,
         condition="zero_shot",
         prompt_fn=build_zero_shot_prompt,
-        checkpoint_file="acuity_zero_shot_checkpoint.csv",
+        checkpoint_file=f"acuity_zero_shot_{MODEL_TAG}_checkpoint.csv",
     )
 
     # ── Step-back ─────────────────────────────────────────────────────────────
@@ -308,7 +309,7 @@ if __name__ == "__main__":
         df,
         condition="step_back",
         prompt_fn=lambda row: build_stepback_prompt(row, principles),
-        checkpoint_file="acuity_step_back_checkpoint.csv",
+        checkpoint_file=f"acuity_step_back_{MODEL_TAG}_checkpoint.csv",
     )
 
     # ── Combine and save ──────────────────────────────────────────────────────

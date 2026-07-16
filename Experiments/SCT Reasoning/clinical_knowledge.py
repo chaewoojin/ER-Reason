@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import random
 import threading
@@ -23,10 +24,11 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 #                                        #   "budget_tokens": 10000}} to enable thinking mode
 #   "microsoft/phi-4"
 MODEL_NAME = "deepseek/deepseek-r1"
+MODEL_TAG  = re.sub(r'[^A-Za-z0-9._-]+', '__', MODEL_NAME).strip('._-') or 'model'
 
 MAX_RETRIES     = 5
 N_WORKERS       = 10
-CHECKPOINT_FILE = "clinical_knowledge_checkpoint.csv"
+CHECKPOINT_FILE = f"clinical_knowledge_{MODEL_TAG}_checkpoint.csv"
 OUTPUT_FILE     = "clinical_knowledge_results.csv"
 
 checkpoint_lock = threading.Lock()

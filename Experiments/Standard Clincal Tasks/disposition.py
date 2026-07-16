@@ -23,6 +23,7 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 #                                        #   "budget_tokens": 10000}} to enable thinking mode
 #   "microsoft/phi-4"
 MODEL_NAME = "deepseek/deepseek-r1"
+MODEL_TAG  = re.sub(r'[^A-Za-z0-9._-]+', '__', MODEL_NAME).strip('._-') or 'model'
 
 MAX_RETRIES     = 5
 N_WORKERS       = 10
@@ -288,7 +289,7 @@ if __name__ == "__main__":
         df,
         condition="zero_shot",
         prompt_fn=build_zero_shot_prompt,
-        checkpoint_file="disposition_zero_shot_checkpoint.csv",
+        checkpoint_file=f"disposition_zero_shot_{MODEL_TAG}_checkpoint.csv",
     )
 
     # ── Step-back ─────────────────────────────────────────────────────────────
@@ -297,7 +298,7 @@ if __name__ == "__main__":
         df,
         condition="step_back",
         prompt_fn=lambda row: build_stepback_prompt(row, principles),
-        checkpoint_file="disposition_step_back_checkpoint.csv",
+        checkpoint_file=f"disposition_step_back_{MODEL_TAG}_checkpoint.csv",
     )
 
     # ── Combine and save ──────────────────────────────────────────────────────

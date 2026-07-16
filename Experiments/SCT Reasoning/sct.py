@@ -23,9 +23,14 @@ OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 #                                        #   "budget_tokens": 10000}} to enable thinking mode
 #   "microsoft/phi-4"
 MODEL_NAME  = "deepseek/deepseek-r1"
+MODEL_TAG   = re.sub(r'[^A-Za-z0-9._-]+', '__', MODEL_NAME).strip('._-') or 'model'
 
 CONDITIONS  = ['baseline', 'single_oracle', 'full_oracle']
 MAX_RETRIES = 5
+
+
+def checkpoint_path(condition):
+    return f"sct_{condition}_{MODEL_TAG}_checkpoint.csv"
 
 client = OpenAI(
     api_key=OPENROUTER_API_KEY,
@@ -347,7 +352,7 @@ if __name__ == "__main__":
         print(f"CONDITION: {condition.upper()}")
         print(f"{'='*50}")
 
-        checkpoint_file = f"sct_{condition}_checkpoint.csv"
+        checkpoint_file = checkpoint_path(condition)
 
         if os.path.exists(checkpoint_file):
             done_df  = pd.read_csv(checkpoint_file)
@@ -381,7 +386,7 @@ if __name__ == "__main__":
 
     # ── Combine and save ──────────────────────────────────────────────────────
     final_df = pd.concat(
-        [pd.read_csv(f"sct_{c}_checkpoint.csv") for c in CONDITIONS],
+        [pd.read_csv(checkpoint_path(c)) for c in CONDITIONS],
         ignore_index=True
     )
 

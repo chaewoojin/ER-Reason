@@ -161,12 +161,14 @@ python Experiments/SCT\ Reasoning/clinical_knowledge.py
 ```bash
 python Experiments/SCT\ Reasoning/sct.py
 # Output: sct_results.csv
-#         sct_baseline_checkpoint.csv
-#         sct_single_oracle_checkpoint.csv
-#         sct_full_oracle_checkpoint.csv
+#         sct_baseline_<model-tag>_checkpoint.csv
+#         sct_single_oracle_<model-tag>_checkpoint.csv
+#         sct_full_oracle_<model-tag>_checkpoint.csv
 ```
 
-Each condition checkpoints independently — if interrupted, re-running will resume from where it left off.
+Each condition checkpoints independently. Checkpoint filenames include a filesystem-safe
+model tag (for example, `deepseek__deepseek-r1`), so switching models cannot resume another
+model's checkpoint. If interrupted, re-running the same model will resume where it left off.
 
 **SCT metrics and figures** (Tables 2, 3, 4 and Figure 3)
 ```bash
